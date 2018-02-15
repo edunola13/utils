@@ -148,14 +148,14 @@ class Validation {
     protected function load_messages(){
         if($this->messages == NULL || $this->locale != $this->messagesLocale){
             if($this->locale != NULL){
-                if(file_exists(realpath(dirname(__FILE__)). '/' . $this->dir_content . "_$this->locale" . '.txt')){
-                    $this->messages= file(realpath(dirname(__FILE__)). '/' . $this->dir_content . "_$this->locale" . '.txt');
+                if(file_exists($this->dir_content . "_$this->locale" . '.txt')){
+                    $this->messages= file($this->dir_content . "_$this->locale" . '.txt');
                     $this->messages= $this->parse_properties($this->messages);
                     $this->messagesLocale= $this->locale;
                 }
             }
             if($this->messages == NULL){
-                $this->messages= file(realpath(dirname(__FILE__)). '/' . $this->dir_content . '.txt');
+                $this->messages= file($this->dir_content . '.txt');
                 $this->messages= $this->parse_properties($this->messages);
                 $this->messagesLocale= NULL;
             }

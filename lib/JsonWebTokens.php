@@ -2,7 +2,7 @@
 namespace Enola\Lib;
 use Firebase\JWT\JWT;
 
-class Auth {
+class JsonWebTokens {
     private static $secret_key = '121api858gelou987';
     private static $encrypt = ['HS256'];
     private static $aud = null;
