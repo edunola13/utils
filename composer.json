@@ -15,8 +15,8 @@
     ],
     "require": {
         "php": ">=5.6.0",
-        "enolaphp/framework": "dev-master",
-        "enolaphp/api-rest-client": "dev-master",
+        "enolaphp/framework": "v1.0",
+        "enolaphp/api-rest-client": "v1.0",
         "firebase/php-jwt": "v5.0.0"
     },
     "require-dev": {        
@@ -28,6 +28,5 @@
             "Enola\\Lib\\": "lib/",
             "Enola\\Common\\": "common/"
         }
-    },
-    "minimum-stability": "dev"
+    }
 }
