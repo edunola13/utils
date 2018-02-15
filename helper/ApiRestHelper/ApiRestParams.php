@@ -14,7 +14,7 @@ class ApiRestParams {
     protected $enabledFilters;
     protected $enabledFields;
     /**
-     * @var  En_HttpRequest
+     * @var En_HttpRequest 
      */
     protected $request;
     
@@ -30,21 +30,23 @@ class ApiRestParams {
         $this->search= $this->request->getParam('q');
         //FILTERS
         foreach ($this->enabledFilters as $keyFilter) {
-            $keyFilter= str_replace('.', '_', $keyFilter);            
+            $keyFilter= str_replace('.', '_', $keyFilter);      
             if($this->request->getParam($keyFilter) != NULL){
                 $filter= $this->request->getParam($keyFilter); 
                 $newValue= explode('^', $filter);
-                $equal= 1;
+                $operation= '=';
                 $valueEnd= NULL;
                 if(count($newValue) > 1){
-                    $equal= 3;
+                    //$equal= 3;
                     $filter= $newValue[0];
                     $valueEnd= $newValue[1];
-                }else if(strpos($filter, '!') !== FALSE){
-                    $equal= 2;
+                }
+                $op= substr($filter, 0, 1);
+                if($op == '=' || $op == '!' || $op == '<' || $op == '>'){
+                    $operation= substr($filter, 0, 1);
                     $filter= substr($filter, 1);
                 }
-                $this->filters[]= array('key' => $keyFilter, 'value' => $filter, 'valueEnd' => $valueEnd, 'equal' => $equal);
+                $this->filters[]= array('key' => $keyFilter, 'value' => $filter, 'valueEnd' => $valueEnd, 'operation' => $operation, 'realKey' => null);
             }
         }
         //SORT
@@ -90,8 +92,8 @@ class ApiRestParams {
         }
     }   
     
-    public function addFilter($key, $value, $equal = 1, $valueEnd = NULL){
-        $this->filters[]= array('key' => $key, 'value' => $value, 'valueEnd' => $valueEnd, 'equal' => $equal);
+    public function addFilter($key, $value, $equal = "=", $valueEnd = NULL){
+        $this->filters[]= array('key' => $key, 'value' => $value, 'valueEnd' => $valueEnd, 'operation' => $equal);
     }
     public function existFilter($key){
         foreach ($this->filters as $value) {
@@ -109,6 +111,21 @@ class ApiRestParams {
             }
         }
         return $value;
+    }
+    public function getFilter($key){
+        foreach ($this->filters as $value) {
+            if($value['key'] == $key){
+                return $value;
+            }
+        }
+        return null;
+    }
+    public function setRealKey($key, $realKey){
+        foreach ($this->filters as &$value) {
+            if($value['key'] == $key){
+                $value['realKey']= $realKey;
+            }
+        }
     }
     
     function getSearch() {
