@@ -1,0 +1,33 @@
+{
+    "name": "enolaphp/utils",
+    "description": "Modulos / Librerias de uso General para el Framework Enola PHP.",
+    "keywords": ["framework", "enolaphp", "core", "modules"],
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/edunola13/utils/issues",
+        "source": "https://github.com/edunola13/utils"
+    },
+    "authors": [
+        {
+            "name": "Eduardo Sebastian Nola",
+            "email": "edunola13@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.0",
+        "enolaphp/framework": "dev-master",
+        "enolaphp/api-rest-client": "dev-master",
+        "firebase/php-jwt": "v5.0.0"
+    },
+    "require-dev": {        
+    },
+    "autoload": {
+        "psr-4": {
+            "Enola\\Handler\\": "handler/",
+            "Enola\\Helper\\": "helper/",
+            "Enola\\Lib\\": "lib/",
+            "Enola\\Common\\": "common/"
+        }
+    },
+    "minimum-stability": "dev"
+}
