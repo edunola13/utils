@@ -7,8 +7,8 @@ namespace Enola\Lib\Validation;
  * @version 1.0
  */
 class ValidationFields extends Validation{
-    public function __construct($locale = NULL) {
-        parent::__construct($locale);
+    public function __construct($locale = NULL, $dirContent = '') {
+        parent::__construct($locale, $dirContent);
     }
     
     /**

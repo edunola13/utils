@@ -7,8 +7,8 @@ namespace Enola\Lib\Validation;
  * @version 1.0
  */
 class ValidationFiles extends Validation{
-    public function __construct($locale = NULL) {
-        parent::__construct($locale);
+    public function __construct($locale = NULL, $dirContent = '') {
+        parent::__construct($locale, $dirContent);
     }
     /**
      * Funcion de uso interno para las funciones de validar que analizan si se trata de un archivo multiple o no
