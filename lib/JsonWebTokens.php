@@ -3,7 +3,7 @@ namespace Enola\Lib;
 use Firebase\JWT\JWT;
 
 class JsonWebTokens {
-    private static $secret_key = '121api858gelou987';
+    private static $secret_key = '11111xxxxx22222';
     private static $encrypt = ['HS256'];
     private static $aud = null;
     
@@ -56,5 +56,23 @@ class JsonWebTokens {
         $aud .= gethostname();
         
         return sha1($aud);
+    }
+    
+    //
+    //GETTERS - SETTERS
+    public static function getSecret_key() {
+        return self::$secret_key;
+    }
+
+    public static function getEncrypt() {
+        return self::$encrypt;
+    }
+
+    public static function setSecret_key($secret_key) {
+        self::$secret_key = $secret_key;
+    }
+
+    public static function setEncrypt($encrypt) {
+        self::$encrypt = $encrypt;
     }
 }
