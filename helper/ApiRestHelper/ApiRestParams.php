@@ -32,21 +32,25 @@ class ApiRestParams {
         foreach ($this->enabledFilters as $keyFilter) {
             $keyFilter= str_replace('.', '_', $keyFilter);      
             if($this->request->getParam($keyFilter) != NULL){
-                $filter= $this->request->getParam($keyFilter); 
-                $newValue= explode('^', $filter);
-                $operation= '=';
-                $valueEnd= NULL;
-                if(count($newValue) > 1){
-                    //$equal= 3;
-                    $filter= $newValue[0];
-                    $valueEnd= $newValue[1];
+                $filter= $this->request->getParam($keyFilter);
+                if(is_array($filter)){
+                    $this->filters[]= array('key' => $keyFilter, 'value' => $filter, 'valueEnd' => null, 'operation' => 'i'/*DE IN*/, 'realKey' => null);
+                }else{
+                    $newValue= explode('^', $filter);
+                    $operation= '=';
+                    $valueEnd= NULL;
+                    if(count($newValue) > 1){
+                        //$equal= 3;
+                        $filter= $newValue[0];
+                        $valueEnd= $newValue[1];
+                    }
+                    $op= substr($filter, 0, 1);
+                    if($op == '=' || $op == '!' || $op == '<' || $op == '>'){
+                        $operation= substr($filter, 0, 1);
+                        $filter= substr($filter, 1);
+                    }
+                    $this->filters[]= array('key' => $keyFilter, 'value' => $filter, 'valueEnd' => $valueEnd, 'operation' => $operation, 'realKey' => null);
                 }
-                $op= substr($filter, 0, 1);
-                if($op == '=' || $op == '!' || $op == '<' || $op == '>'){
-                    $operation= substr($filter, 0, 1);
-                    $filter= substr($filter, 1);
-                }
-                $this->filters[]= array('key' => $keyFilter, 'value' => $filter, 'valueEnd' => $valueEnd, 'operation' => $operation, 'realKey' => null);
             }
         }
         //SORT
