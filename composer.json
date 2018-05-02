@@ -3,7 +3,7 @@
     "description": "Modulos / Librerias de uso General para el Framework Enola PHP.",
     "keywords": ["framework", "enolaphp", "core", "modules"],
     "license": "MIT",
-    "version": "1.3",
+    "version": "1.3.1",
     "support": {
         "issues": "https://github.com/edunola13/utils/issues",
         "source": "https://github.com/edunola13/utils"
