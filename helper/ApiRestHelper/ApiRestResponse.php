@@ -27,6 +27,14 @@ class ApiRestResponse{
         $this->body[$key]= $element;
     }
     
+    /**
+    * Crea una respuesta API en base a un elemento y sus campos
+    *
+    * @deprecated
+    * @param RtaServices $rtaSer
+    * @param $keyElement = null
+    * @param array $fields = null
+    */
     public function createRta(RtaServices $rtaSer, $keyElement = null, array $fields = null){
         if($rtaSer === false){
             $this->code= 401;
@@ -38,6 +46,29 @@ class ApiRestResponse{
             if($rtaSer->getParam($keyElement) != NULL){
                 $jsonHelper= new JsonHelper();
                 $this->body[$keyElement]= $jsonHelper->object_to_array($rtaSer->getParam($keyElement), $fields);   
+            }
+        }
+    }
+    
+    /**
+    * Crea una respuesta API en base a un elemento y sus campos
+    *
+    * @param RtaServices $rtaSer
+    * @param $keyElement = null
+    * @param array $fields = null
+    */
+    public function createResponse(RtaServices $rtaSer, $keyElement = null, array $fields = null){
+        if($rtaSer === false){
+            $this->code= 401;
+        }else if(!$rtaSer->isOk()){
+            $this->code= 400;
+        }
+        $this->body= $rtaSer->toArray();
+        if($keyElement){
+            if($rtaSer->getParam($keyElement) != NULL){
+                $jsonHelper= new JsonHelper();
+                $instance = $rtaSer->getParam($keyElement);
+                $this->body[$keyElement]= $jsonHelper->object_to_array($instance, is_null($fields) ? $instance->fields : $fields);   
             }
         }
     }
