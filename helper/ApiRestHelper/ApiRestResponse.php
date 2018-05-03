@@ -36,7 +36,7 @@ class ApiRestResponse{
     * @param array $fields = null
     */
     public function createRta(RtaServices $rtaSer, $keyElement = null, array $fields = null){
-        if($rtaSer === false){
+        if($rtaSer->auth === false){
             $this->code= 401;
         }else if(!$rtaSer->isOk()){
             $this->code= 400;
@@ -58,7 +58,7 @@ class ApiRestResponse{
     * @param array $fields = null
     */
     public function createResponse(RtaServices $rtaSer, $keyElement = null, array $fields = null){
-        if($rtaSer === false){
+        if($rtaSer->auth === false){
             $this->code= 401;
         }else if(!$rtaSer->isOk()){
             $this->code= 400;
@@ -74,7 +74,7 @@ class ApiRestResponse{
     }
     
     public function responseElement(En_HttpResponse $response, $element, array $fields){
-        if($element === false){
+        if($element === false || ($element instanceof RtaServices && $element->auth === false)){
             $response->sendApiRest(401);
             return;
         }
@@ -88,7 +88,7 @@ class ApiRestResponse{
     }
     
     public function responseRta(En_HttpResponse $response, RtaServices $rtaSer){
-        if($rtaSer === false){
+        if($rtaSer->auth === false){
             $this->code= 401;
         }else if(! $rtaSer->isOk()){
             $this->code= 400;
