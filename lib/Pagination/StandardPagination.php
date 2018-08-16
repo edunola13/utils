@@ -1,14 +1,14 @@
 <?php
-namespace Enola\Lib;
+namespace Enola\Lib\Pagination;
 
+use JsonSerializable;
 /**
- * Libreria que ayuda a paginar un conjunto de resultados
+ * Clase que ayuda a paginar un conjunto de resultados
  * @author Eduardo Sebastian Nola <edunola13@gmail.com>
- * @category Enola\Lib
+ * @category Enola\Lib\Pagination
  * @version 1.0
- * @deprecated
  */
-class Pager implements \JsonSerializable{
+class StandardPagination implements PaginationInterface, JsonSerializable{
     /** Cantidad de elementos por pagina 
      * @var int */
     public $amountPerPage;
@@ -107,11 +107,13 @@ class Pager implements \JsonSerializable{
      * @return array
      */
     public function jsonSerialize() {
-        return array('count' => $this->totalAmount, 
+        return [
+            'count' => $this->totalAmount, 
             'countOfPages' => $this->numberOfPages(), 
             'limit' => $this->amountPerPage,
             'page' => $this->currentPage, 
             'previousPage' => $this->previousPage(), 
-            'nextPage' => $this->nextPage());
+            'nextPage' => $this->nextPage()
+        ];
     }
 }

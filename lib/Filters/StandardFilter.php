@@ -1,10 +1,8 @@
 <?php
-namespace Enola\Helper\ApiRestHelper;
+namespace Enola\Lib\Filters;
 use Enola\Http\Models\En_HttpRequest;
-/**
- * @deprecated
- */
-class ApiRestParams {
+
+class StandardFilter {
     protected $search= NULL;
     protected $filters= array();
     protected $sort= NULL;
@@ -32,7 +30,7 @@ class ApiRestParams {
         $this->search= $this->request->getParam('q');
         //FILTERS
         foreach ($this->enabledFilters as $keyFilter) {
-            $keyFilter= str_replace('.', '_', $keyFilter);      
+            //$keyFilter= str_replace('.', '_', $keyFilter);      
             if($this->request->getParam($keyFilter) != NULL){
                 $filter= $this->request->getParam($keyFilter);
                 if(is_array($filter)){
