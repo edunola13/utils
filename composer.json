@@ -26,7 +26,11 @@
             "Enola\\Handler\\": "handler/",
             "Enola\\Helper\\": "helper/",
             "Enola\\Lib\\": "lib/",
-            "Enola\\Common\\": "common/"
+            "Enola\\Common\\": "common/",
+            "Enola\\Rest\\": "rest/",
+            "Enola\\Db\\": "db/"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable" : true
 }
