@@ -4,11 +4,12 @@ namespace Enola\Db\Doctrine;
 use Doctrine\ORM\NoResultException;
 use Enola\Db\Doctrine\EntityManagerFactoryDoctrine;
 use Enola\Lib\Filters\StandardFilter;
+use Enola\Db\Exceptions\DoesNotExist;
 
 class DoctrineHelper {
     /** Nombre de la clase del modelo
      * @var string  */
-    public $model_class;
+    public $model;
     /** Campo del modelo que funciona como clave
      * @var string  */
     public $pk = 'id';
@@ -64,8 +65,15 @@ class DoctrineHelper {
      * Retorna un QueryBuilder
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function queryBuilder() {
+    public function queryBuilderDoctrine() {
         return $this->getConnection()->createQueryBuilder();
+    }
+    /**
+     * Retorna un EnolaQueryBuilder
+     * @return EnolaQueryBuilder
+     */
+    public function queryBuilder() {
+        return new EnolaQueryBuilder($this->getConnection(), $this->model);
     }
     
     //
@@ -160,7 +168,7 @@ class DoctrineHelper {
      * @param \Doctrine\ORM\QueryBuilder $query
      * @param string[] $relations
      */
-    protected function buildSelectForQuery($query, $relations = []) {
+    public function buildSelectForQuery($query, $relations = []) {
         $select = 'model';
         /*$rels = array_filter($this->relations, function($k) {
             $relationConf = $this->getSerializer($k);
@@ -177,7 +185,7 @@ class DoctrineHelper {
      * @param \Doctrine\ORM\QueryBuilder $query
      * @param string[] $relations
      */
-    protected function buildFromForQuery($query, $relations = []) {
+    public function buildFromForQuery($query, $relations = []) {
         $query->from($this->model, 'model');
         /*foreach ($this->relations as $alias => $value) {
             $relationConf = $this->getSerializer($alias);
@@ -197,7 +205,7 @@ class DoctrineHelper {
      * @param StandardFilter $filters
      * @param string[] $searchs
      */
-    protected function buildWhereForQuery($query, $filters, $searchs) {
+    public function buildWhereForQuery($query, $filters, $searchs) {
         $values = [];
         
         if ($filters->getSearch()) {
@@ -228,7 +236,7 @@ class DoctrineHelper {
      * @param \Doctrine\ORM\QueryBuilder $query
      * @param mixed $filter
      */
-    protected function addFilters($query, $filter){
+    public function addFilters($query, $filter){
         //$key= isset($filter['realKey']) ? str_replace('_', '.', $filter['realKey']) : str_replace('_', '.', $filter['key']);
         $key = isset($filter['realKey']) ? $this->getAttrWithAlias($filter['realKey']) : $this->getAttrWithAlias($filter['key']);
         //Si se manda valor null creo con is y is not null
@@ -252,7 +260,7 @@ class DoctrineHelper {
      * @param \Doctrine\ORM\QueryBuilder $query
      * @param StandardFilter $filters
      */
-    protected function buildSortForQuery($query, $filters) {
+    public function buildSortForQuery($query, $filters) {
         if ($filters->getSort()) {
             foreach ($filters->getSort() as $sort) {
                 //VER EL TEMA DE QUE CUANDO ORDENA POR USERNAME EN ESTE CASO HAY QUE AGREGARLE EL "model.username"
@@ -265,7 +273,7 @@ class DoctrineHelper {
      * @param \Doctrine\ORM\QueryBuilder $query
      * @param StandardFilter $filters
      */
-    protected function buildPagerForQuery($query, $filters) {
+    public function buildPagerForQuery($query, $filters) {
         if ($filters->getPager()) {
             $query->setMaxResults($filters->getPager()['per_page']);
             $query->setFirstResult(($filters->getPager()['page'] - 1) * $filters->getPager()['per_page']);
@@ -277,7 +285,7 @@ class DoctrineHelper {
      * @param mixed[] $filters
      * @return mixed[]
      */
-    protected function valuesFilter($filters){
+    public function valuesFilter($filters){
         $values = [];
         foreach ($filters as $filter) {
             if($filter['value'] === 'null'){
@@ -316,7 +324,7 @@ class DoctrineHelper {
      * @param srting $name
      * @return srting
      */
-    protected function getAttrWithAlias($name) {
+    public function getAttrWithAlias($name) {
         if (strpos($name, '__') === false) {
             return 'model.' . $name;
         } else {
