@@ -30,12 +30,12 @@ class AuthorizationProfile extends En_Filter {
         }else{            
             if($request->getToken()){
                 try{
-                    JsonWebTokens::setSecret_key($this->context->getContextVar('secret_key'));
+                    JsonWebTokens::setSecret_key($this->context->getContextVar('jwt_secret_key'));
                     JsonWebTokens::check($request->getToken());
                     $data= JsonWebTokens::getData($request->getToken());
                     $userProfile= $data['profiles']; 
                 } catch (\Exception $e) {
-                    $response->sendApiRestEncode(401, array('code' => 'error-token'));
+                    $response->sendApiRestEncode(401, array('error' => 'error-token'));
                     return false;
                     //\\Enola\Support\Error::write_log($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine());
                 }                
@@ -66,7 +66,7 @@ class AuthorizationProfile extends En_Filter {
             }else if(isset($auth->getProfile($actualProfile)['error-forward'])){
                 $this->forward($auth->getProfile($actualProfile)['error-forward']);
             }else{
-                $response->sendApiRestEncode(401, array('code' => 'no-permissions'));
+                $response->sendApiRestEncode(401, array('error' => 'no-permissions'));
             }
             return false;
         }

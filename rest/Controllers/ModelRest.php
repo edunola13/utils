@@ -5,8 +5,8 @@ use Enola\Http\Models\En_Controller, Enola\Http\Models\En_HttpRequest, Enola\Htt
 use Enola\Lib\Filters\StandardFilter;
 use Enola\Lib\Pagination\StandardPagination;
 
-use Gelou\Serializers\ValidationException;
-use Gelou\Daos\DoesNotExist;
+use Enola\Rest\Exceptions\ValidationException;
+use Enola\Db\Exceptions\DoesNotExist;
 
 class ModelRest extends En_Controller implements ModelRestInterface {
     /** Nombre de la clase del modelo del endpoint
