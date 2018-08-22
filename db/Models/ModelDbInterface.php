@@ -8,4 +8,6 @@ interface ModelDbInterface {
     public function save();
     
     public function destroy();
+    
+    public function query();    
 }
