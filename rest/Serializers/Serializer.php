@@ -199,7 +199,13 @@ abstract class Serializer implements SerializerInterface {
         }
     }
     
-    
+    /**
+     * Carga los datos pasados a mano en la instancia actual
+     */
+    public function loadExtraData($data) {
+        $reflection = new Reflection($this->instance);
+        $reflection->setProperties($data);        
+    }
     
     /**
      * Crea una nueva instancia del modelo sin guardarla
@@ -214,8 +220,9 @@ abstract class Serializer implements SerializerInterface {
      * Crea una nueva instancia del modelo guardandola
      * @return mixed
      */
-    public function createAndSave() {
+    public function createAndSave($data = []) {
         $this->create();
+        $this->loadExtraData($data);
         $this->validateBeforeSave();
         $this->instance->save();
         $this->setResult($this->instance);
@@ -234,19 +241,20 @@ abstract class Serializer implements SerializerInterface {
      * Actualiza una instancia guardandola
      * @return mixed
      */
-    public function updateAndSave() {
+    public function updateAndSave($data = []) {
         $this->update();
+        $this->loadExtraData($data);
         $this->validateBeforeSave();
         $this->instance->save();
         $this->setResult($this->instance);
         return $this->instance;
     }
         
-    public function save() {
+    public function save($data = []) {
         if ($this->instance) {
-            return $this->updateAndSave();
+            return $this->updateAndSave($data);
         } else {
-            return $this->createAndSave();
+            return $this->createAndSave($data);
         }
     }
     

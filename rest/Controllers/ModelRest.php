@@ -57,7 +57,7 @@ class ModelRest extends En_Controller implements ModelRestInterface {
         {
             $serializer = $this->getSerializer($request, ['data' => $request->getBody()]);
             if ($serializer->isValid()) {
-                $serializer->save();
+                $this->performCreate($serializer, $request);
                 $response->sendApiRestEncode($response::HTTP_CREATED, $serializer->serialize());
             } else {
                 $response->sendApiRestEncode($response::HTTP_BAD_REQUEST, $serializer->errors);
@@ -75,7 +75,7 @@ class ModelRest extends En_Controller implements ModelRestInterface {
             $object = $this->getObject($request, $this->getUriParam('pk'));
             $serializer = $this->getSerializer($request, ['instance' => $object, 'data' => $request->getBody()]);
             if ($serializer->isValid()) {
-                $serializer->save();
+                $this->performUpdate($serializer, $request, $pk);
                 $response->sendApiRestEncode($response::HTTP_CREATED, $serializer->serialize());
             } else {
                 $response->sendApiRestEncode($response::HTTP_BAD_REQUEST, $serializer->errors);
@@ -97,7 +97,7 @@ class ModelRest extends En_Controller implements ModelRestInterface {
             $object = $this->getObject($request, $this->getUriParam('pk'));
             $serializer = $this->getSerializer($request, ['instance' => $object, 'data' => $request->getBody(), 'partial' => true]);
             if ($serializer->isValid()) {
-                $serializer->save();
+                $this->performUpdate($serializer, $request, $pk);
                 $response->sendApiRestEncode($response::HTTP_CREATED, $serializer->serialize());
             } else {
                 $response->sendApiRestEncode($response::HTTP_BAD_REQUEST, $serializer->errors);
@@ -195,5 +195,13 @@ class ModelRest extends En_Controller implements ModelRestInterface {
      */
     protected function getObject($request, $pk) {
         return $this->model::db()->query_get($pk, $this->getRelations($request));
+    }
+    
+    protected function performCreate($serializer, $request) {
+        $serializer->save();
+    }
+    
+    protected function performUpdate($serializer, $request, $pk) {
+        $serializer->save();
     }
 }
