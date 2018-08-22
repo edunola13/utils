@@ -118,7 +118,7 @@ class ModelRest extends En_Controller implements ModelRestInterface {
         {
             $object = $this->getObject($request, $this->getUriParam('pk'));
             $serializer = $this->getSerializer($request, ['instance' => $object]);
-            $serializer->removeInstance();
+            $serializer->delete();
             $response->sendApiRest($response::HTTP_NO_CONTENT);
         }
         catch (ValidationException $e) 
