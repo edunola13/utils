@@ -16,7 +16,7 @@ trait ModelDoctrine {
      */
     public static function db() {
         if (! self::$db) {
-            self::$db = new DoctrineHelper(self::class, ['pk' => self::$pk]);
+            self::$db = new DoctrineHelper(self::class, ['pk' => self::$pk, 'connection' => self::$connection]);
         }
         return self::$db;
     }
