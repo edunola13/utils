@@ -2,7 +2,7 @@
 namespace Enola\Lib\Filters;
 use Enola\Http\Models\En_HttpRequest;
 
-class StandardFilter {
+class StandardFilter implements FilterInterface {
     protected $search= NULL;
     protected $filters= array();
     protected $sort= NULL;
