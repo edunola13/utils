@@ -6,13 +6,13 @@ use Doctrine\ORM\Configuration;
 use Enola\EnolaContext;
 
 class EntityManagerFactoryDoctrine {
-    protected static $instance;
-    protected static $connection;
+    protected static $instances;
+    protected static $connections;
     
     protected function __construct($actualDb = NULL) {
-        $context= EnolaContext::getInstance();
+        $context = EnolaContext::getInstance();
 
-        $configDb= $context->readConfigurationFile("database");
+        $configDb = $context->readConfigurationFile("database");
         if($actualDb == NULL)$actualDb= $configDb['actual-db'];
         //$actualDb= $configDb['actual-db'];
         $doctrineDb= $configDb[$actualDb];        
@@ -58,22 +58,22 @@ class EntityManagerFactoryDoctrine {
     }
 
     public static function getInstance($actualDb = NULL){
-        if(!EntityManagerFactoryDoctrine::$instance){
-            EntityManagerFactoryDoctrine::$instance = new EntityManagerFactoryDoctrine($actualDb);
+        if(! isset(EntityManagerFactoryDoctrine::$instances[$actualDb])){
+            EntityManagerFactoryDoctrine::$instances[$actualDb] = new EntityManagerFactoryDoctrine($actualDb);
         }
-        return EntityManagerFactoryDoctrine::$instance;
+        return EntityManagerFactoryDoctrine::$instances[$actualDb];
     }
 
-    public static function connection() {
-        $instance = EntityManagerFactoryDoctrine::getInstance();
-        if (!EntityManagerFactoryDoctrine::$connection) {
-            EntityManagerFactoryDoctrine::$connection = EntityManager::create($instance->dbParams, $instance->config);
+    public static function connection($actualDb = NULL) {
+        $instance = EntityManagerFactoryDoctrine::getInstance($actualDb);
+        if (! isset(EntityManagerFactoryDoctrine::$connections[$actualDb])) {
+            EntityManagerFactoryDoctrine::$connections[$actualDb] = EntityManager::create($instance->dbParams, $instance->config);
         }
-        return EntityManagerFactoryDoctrine::$connection;
+        return EntityManagerFactoryDoctrine::$connections[$actualDb];
     }
     
-    public static function newConnection() {
-        $instance = EntityManagerFactoryDoctrine::getInstance();
+    public static function newConnection($actualDb = NULL) {
+        $instance = EntityManagerFactoryDoctrine::getInstance($actualDb);
         return EntityManager::create($instance->dbParams, $instance->config);
     }
 }

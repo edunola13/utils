@@ -3,6 +3,7 @@ namespace Enola\Db\Models;
 
 trait ModelDb {
     public static $pk = 'id';
+    public static $connection = null;
     
     public abstract static function db();
     

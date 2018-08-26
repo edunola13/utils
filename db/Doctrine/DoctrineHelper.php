@@ -13,6 +13,9 @@ class DoctrineHelper {
     /** Campo del modelo que funciona como clave
      * @var string  */
     public $pk = 'id';
+    /** Campo del modelo que funciona como clave
+     * @var string  */
+    public $connection_db = null;
     
     /**
      * @var \Doctrine\ORM\EntityManager
@@ -26,6 +29,7 @@ class DoctrineHelper {
         $this->model = $model;
         if (is_array($options)) {
             $this->pk = isset($options['id']) ? $options['id'] : $this->pk;
+            $this->connection_db = isset($options['connection']) ? $options['connection'] : $this->connection_db;
         }
     }
     
@@ -41,7 +45,7 @@ class DoctrineHelper {
      */
     public function getConnection() {
         if (! $this->connection) {
-            $this->connection = EntityManagerFactoryDoctrine::connection();
+            $this->connection = EntityManagerFactoryDoctrine::connection($this->connection_db);
         }
         return $this->connection;
     }
@@ -301,6 +305,18 @@ class DoctrineHelper {
         return $values;
     }
     /**
+     * Retorna el nombre completo de la relacion
+     * @param srting $name
+     * @return srting
+     */
+    public function getAttrWithAlias($name) {
+        if (strpos($name, '__') === false) {
+            return 'model.' . $name;
+        } else {
+            return str_replace('__', '.', $name);
+        }
+    }
+    /**
      * Retorna la operacion en base a un codigo
      * @param srting $opCode
      * @return string
@@ -319,16 +335,5 @@ class DoctrineHelper {
                 return '=';
         }
     }
-    /**
-     * Retorna el nombre completo de la relacion
-     * @param srting $name
-     * @return srting
-     */
-    public function getAttrWithAlias($name) {
-        if (strpos($name, '__') === false) {
-            return 'model.' . $name;
-        } else {
-            return str_replace('__', '.', $name);
-        }
-    }
+    
 }
