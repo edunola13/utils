@@ -2,8 +2,8 @@
 namespace Enola\Rest\Controllers;
 
 use Enola\Http\Models\En_Controller, Enola\Http\Models\En_HttpRequest, Enola\Http\Models\En_HttpResponse;
-use Enola\Lib\Filters\StandardFilter;
-use Enola\Lib\Pagination\StandardPagination;
+use Enola\Lib\Filters\FilterInterface;
+use Enola\Lib\Pagination\PaginationInterface;
 
 use Enola\Rest\Exceptions\ValidationException;
 use Enola\Db\Exceptions\DoesNotExist;
@@ -13,9 +13,14 @@ class ModelRest extends En_Controller implements ModelRestInterface {
      * @var string  */
     public $model = '';
     /** Nombre de la clase del serializar
-     * @var \Gelou\Serializers\SerializerInterface
-     */
+     * @var string */
     public $serializer_class = '';
+    /** Nombre de la clase del filtro
+     * @var string */
+    public $filter_class = 'Enola\Lib\Filters\StandardFilter';
+    /** Nombre de la clase del paginador
+     * @var string */
+    public $pagination_class = 'Enola\Lib\Pagination\StandardPagination';
     /** Campos sobre los que se puede filtrar
      * @var string[] */
     public $filters = [];
@@ -150,6 +155,40 @@ class ModelRest extends En_Controller implements ModelRestInterface {
     protected function getSerializer($request, $options = []) {
         $class = $this->getSerializerClass($request);
         return new $class($options);
+    }    
+    /**
+     * Retorna el nombre de clase del filtro correspondiente
+     * @param En_HttpRequest $request
+     * @return string
+     */
+    protected function getFilterClass($request) {
+        return $this->filter_class;
+    }
+    /**
+     * Retorna la instancia de una clase filtro con todos los parametros cargados
+     * @param En_HttpRequest $request
+     * @return FilterInterface
+     */
+    protected function getFilter($request) {
+        $class = $this->getFilterClass($request);
+        return new $class($request, true, $this->filters);
+    }
+    /**
+     * Retorna el nombre de clase del paginador correspondiente
+     * @param En_HttpRequest $request
+     * @return string
+     */
+    protected function getPaginationClass($request) {
+        return $this->pagination_class;
+    }
+    /**
+     * Retorna la instancia de una clase paginador
+     * @param En_HttpRequest $request
+     * @return PaginationInterface
+     */
+    protected function getPagination($request, $limit, $count, $page) {
+        $class = $this->getPaginationClass($request);
+        return new $class($limit, $count, $page);
     }
     /**
      * Retorna la relaciones eager a cargar
@@ -158,14 +197,6 @@ class ModelRest extends En_Controller implements ModelRestInterface {
      */
     protected function getRelations($request) {
         return $this->relationsEager;
-    }
-    /**
-     * Retorna StandardFilter con todos los parametros cargados
-     * @param En_HttpRequest $request
-     * @return StandardFilter
-     */
-    protected function getFilter($request) {        
-        return new StandardFilter($request, true, $this->filters);
     }
     /**
      * Retorna la lista de objetos a devolver con o sin paginacion
@@ -181,7 +212,7 @@ class ModelRest extends En_Controller implements ModelRestInterface {
             $count = $this->model::db()->query_list_pager($relations, $filter, $this->searchs);
             $limit = $filter->getPager() ? $filter->getPager()['per_page'] : $count;
             $page = $filter->getPager() ? $filter->getPager()['page'] : 1;
-            $result['pager'] = new StandardPagination((int)$limit, $count, (int)$page);
+            $result['pagination'] = $this->getPagination($request, (int)$limit, $count, (int)$page);
         } else {
             $result = $this->model::db()->query_list($relations, $filter, $this->searchs, false);
         }
