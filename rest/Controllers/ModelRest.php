@@ -80,7 +80,7 @@ class ModelRest extends En_Controller implements ModelRestInterface {
             $object = $this->getObject($request, $this->getUriParam('pk'));
             $serializer = $this->getSerializer($request, ['instance' => $object, 'data' => $request->getBody()]);
             if ($serializer->isValid()) {
-                $this->performUpdate($serializer, $request, $pk);
+                $this->performUpdate($serializer, $request, $this->getUriParam('pk'));
                 $response->sendApiRestEncode($response::HTTP_CREATED, $serializer->serialize());
             } else {
                 $response->sendApiRestEncode($response::HTTP_BAD_REQUEST, $serializer->errors);
@@ -102,7 +102,7 @@ class ModelRest extends En_Controller implements ModelRestInterface {
             $object = $this->getObject($request, $this->getUriParam('pk'));
             $serializer = $this->getSerializer($request, ['instance' => $object, 'data' => $request->getBody(), 'partial' => true]);
             if ($serializer->isValid()) {
-                $this->performUpdate($serializer, $request, $pk);
+                $this->performUpdate($serializer, $request, $this->getUriParam('pk'));
                 $response->sendApiRestEncode($response::HTTP_CREATED, $serializer->serialize());
             } else {
                 $response->sendApiRestEncode($response::HTTP_BAD_REQUEST, $serializer->errors);
