@@ -28,7 +28,7 @@ class DoctrineHelper {
     public function __construct($model, $options = []) {
         $this->model = $model;
         if (is_array($options)) {
-            $this->pk = isset($options['id']) ? $options['id'] : $this->pk;
+            $this->pk = isset($options['pk']) ? $options['pk'] : $this->pk;
             $this->connection_db = isset($options['connection']) ? $options['connection'] : $this->connection_db;
         }
     }
@@ -159,7 +159,7 @@ class DoctrineHelper {
      */
     public function query_list_pager(array $relations, StandardFilter $filters, $searchs = []) {
         $query = $this->getConnection()->createQueryBuilder();
-        $query->select('COUNT(DISTINCT model.id)');
+        $query->select('COUNT(DISTINCT model.' . $this->pk . ')');
         $this->buildFromForQuery($query, $relations);
         $this->buildWhereForQuery($query, $filters, $searchs);        
         return $query->getQuery()->getSingleScalarResult();
@@ -219,7 +219,7 @@ class DoctrineHelper {
                 if (! $first) {
                     $dql  .= ' OR ';
                 }
-                $dql .= $this->getAttrWithAlias($attr) . ' LIKE :_q_';
+                $dql .= $this->getAttrWithAlias($attr, true) . ' LIKE :_q_';
                 $first = false;
             }
             $query->where($dql);
@@ -242,7 +242,7 @@ class DoctrineHelper {
      */
     public function addFilters($query, $filter){
         //$key= isset($filter['realKey']) ? str_replace('_', '.', $filter['realKey']) : str_replace('_', '.', $filter['key']);
-        $key = isset($filter['realKey']) ? $this->getAttrWithAlias($filter['realKey']) : $this->getAttrWithAlias($filter['key']);
+        $key = isset($filter['realKey']) ? $this->getAttrWithAlias($filter['realKey'], true) : $this->getAttrWithAlias($filter['key'], true);
         //Si se manda valor null creo con is y is not null
         if ($filter['value'] === 'null') {
             $query->andWhere($key . ($filter['operation'] == '!' ? ' is not null': ' is null'));
@@ -268,7 +268,7 @@ class DoctrineHelper {
         if ($filters->getSort()) {
             foreach ($filters->getSort() as $sort) {
                 //VER EL TEMA DE QUE CUANDO ORDENA POR USERNAME EN ESTE CASO HAY QUE AGREGARLE EL "model.username"
-                $query->orderBy($this->getAttrWithAlias($sort['value']), ($sort['asc'] ? 'ASC' : 'DESC'));
+                $query->orderBy($this->getAttrWithAlias($sort['value'], true), ($sort['asc'] ? 'ASC' : 'DESC'));
             }
         }
     }
@@ -307,12 +307,20 @@ class DoctrineHelper {
     /**
      * Retorna el nombre completo de la relacion
      * @param srting $name
+     * @params boolean $replaceOnlyTheLast
      * @return srting
      */
-    public function getAttrWithAlias($name) {
+    public function getAttrWithAlias($name, $replaceOnlyTheLast = false) {
         if (strpos($name, '__') === false) {
             return 'model.' . $name;
         } else {
+            if ($replaceOnlyTheLast) {
+                $pos = strrpos($name, '__');
+                if ($pos !== false) {
+                    return substr_replace($name, '.', $pos, strlen('__'));
+                }
+                return $name;
+            }
             return str_replace('__', '.', $name);
         }
     }

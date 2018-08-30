@@ -328,7 +328,7 @@ abstract class Serializer implements SerializerInterface {
                     } else {
                         $reflectionRel = new Reflection($relation);
                         $serializer = $this->getSerializerInstance($value);
-                        $var[$value] = $reflectionRel->getProperty($serializer->model::$pk);                   
+                        $var[$value] = $reflectionRel->getProperty($serializer->model::pk());                   
                     }
                 } else {
                     $serializer = $this->getSerializerInstance($value);
