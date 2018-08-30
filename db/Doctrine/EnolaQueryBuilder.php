@@ -51,7 +51,7 @@ class EnolaQueryBuilder extends QueryBuilder {
      */
     public function filters($filters){
         foreach ($filters as $filter) {
-            $key = $this->getAttrWithAlias($filter['f']);
+            $key = $this->getAttrWithAlias($filter['f'], true);
             //Si se manda valor null creo con is y is not null
             if ($filter['va'] === null) {
                 $this->andWhere($key . ($filter['op'] == '!' ? ' is not null': ' is null'));
@@ -133,12 +133,20 @@ class EnolaQueryBuilder extends QueryBuilder {
     /**
      * Retorna el nombre completo de la relacion
      * @param srting $name
+     * @params boolean $replaceOnlyTheLast
      * @return srting
      */
-    public function getAttrWithAlias($name) {
+    public function getAttrWithAlias($name, $replaceOnlyTheLast = false) {
         if (strpos($name, '__') === false) {
             return 'model.' . $name;
         } else {
+            if ($replaceOnlyTheLast) {
+                $pos = strrpos($name, '__');
+                if ($pos !== false) {
+                    return substr_replace($name, '.', $pos, strlen('__'));
+                }
+                return $name;
+            }
             return str_replace('__', '.', $name);
         }
     }
