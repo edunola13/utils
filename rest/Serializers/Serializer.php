@@ -311,7 +311,7 @@ abstract class Serializer implements SerializerInterface {
         $reflection = new Reflection($object);
         foreach ($this->fields as $value) {
             if (in_array($value, $this->write_only)) {
-                break;
+                continue;
             }
             if(isset($this->relations[$value])){
                 $relationConf = $this->getSerializer($value);
